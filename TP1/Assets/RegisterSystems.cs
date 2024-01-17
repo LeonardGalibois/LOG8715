@@ -8,6 +8,8 @@ public class RegisterSystems
         // determine order of systems to add
         var toRegister = new List<ISystem>();
 
+        World.currentWorld = new World();
+
         // Add your systems here
         toRegister.Add(new MovementSystem());
         toRegister.Add(new CollisionSystem());
