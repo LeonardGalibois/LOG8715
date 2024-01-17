@@ -10,13 +10,15 @@ namespace Assets.Systems
 
         public void UpdateSystem()
         {
-            List<uint> entities = new List<uint>();
-
-            foreach(uint entity in entities)
+            foreach(uint entity in World.currentWorld.entities)
             {
-                PositionComponent position = null;//world.GetComponent<PositionComponent>(entity);
+                PositionComponent position = World.currentWorld.GetComponent<PositionComponent>(entity);
+                SpeedComponent speed = World.currentWorld.GetComponent<SpeedComponent>(entity);
 
-                if(true/*world.GetComponent<PositionComponent>(entity) && world. */)
+                if (speed != null && position != null)
+                {
+                    position.position += Time.deltaTime * speed.speed;
+                }
             }
         }
     }
