@@ -10,6 +10,8 @@ class World
     List<uint> entities;
     uint currentEntityID = 0;
 
+    static World currentWorld;
+
     public World()
     {
         components = new Dictionary<Type, Dictionary<uint, IComponent>>();
