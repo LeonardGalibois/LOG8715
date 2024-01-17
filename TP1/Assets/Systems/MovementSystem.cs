@@ -10,7 +10,14 @@ namespace Assets.Systems
 
         public void UpdateSystem()
         {
+            List<uint> entities = new List<uint>();
 
+            foreach(uint entity in entities)
+            {
+                PositionComponent position = null;//world.GetComponent<PositionComponent>(entity);
+
+                if(true/*world.GetComponent<PositionComponent>(entity) && world. */)
+            }
         }
     }
 }

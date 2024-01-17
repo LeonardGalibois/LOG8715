@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public struct ColorComponent : IComponent
+public class ColorComponent : IComponent
 {
     Color color;
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public struct CollisionComponent : IComponent
+public class CollisionComponent : IComponent
 {
     int nbCollisions;
 }
