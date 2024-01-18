@@ -12,6 +12,8 @@ public class RegisterSystems
 
         // Add your systems here
         toRegister.Add(new CircleLifetimeSystem());
+        toRegister.Add(new MovementSystem());
+        toRegister.Add(new CollisionSystem());
         toRegister.Add(new RenderSystem());
 
         return toRegister;

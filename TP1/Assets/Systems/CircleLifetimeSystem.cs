@@ -18,7 +18,7 @@ namespace Assets.Systems
 
                 World.currentWorld.AddComponent(entity, new PositionComponent(shapeConfig.initialPosition));
                 World.currentWorld.AddComponent(entity, new SizeComponent(shapeConfig.initialSize));
-                World.currentWorld.AddComponent(entity, new SpeedComponent(shapeConfig.initialVelocity));
+                World.currentWorld.AddComponent(entity, new VelocityComponent(shapeConfig.initialVelocity));
                 World.currentWorld.AddComponent(entity, new ColorComponent(Color.white));
                 World.currentWorld.AddComponent(entity, new CollisionComponent(0));
 

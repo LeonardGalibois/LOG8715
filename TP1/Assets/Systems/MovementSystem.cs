@@ -13,11 +13,11 @@ namespace Assets.Systems
             foreach(uint entity in World.currentWorld.entities)
             {
                 PositionComponent position = World.currentWorld.GetComponent<PositionComponent>(entity);
-                SpeedComponent speed = World.currentWorld.GetComponent<SpeedComponent>(entity);
+                VelocityComponent speed = World.currentWorld.GetComponent<VelocityComponent>(entity);
 
                 if (speed != null && position != null)
                 {
-                    position.position += Time.deltaTime * speed.speed;
+                    position.position += Time.deltaTime * speed.velocity;
                 }
             }
         }
