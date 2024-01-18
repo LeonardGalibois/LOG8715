@@ -4,36 +4,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-class World
+public class World
 {
     Dictionary<Type, Dictionary<uint, IComponent>> components;
-    List<uint> entities;
+    public List<uint> entities;
     uint currentEntityID = 0;
 
-    static World currentWorld;
+    public static World currentWorld;
 
     public World()
     {
         components = new Dictionary<Type, Dictionary<uint, IComponent>>();
+        entities = new List<uint>();
     }
 
-    public uint CreateEntity(List<IComponent> components=null)
+    public uint CreateEntity()
     {
+        uint id = 0;
         ulong currentTry = 0;
 
         // Make sure the ID is available and not already in use
         while (currentTry++ < uint.MaxValue)
         {
-            uint id = currentEntityID++;
+            id = currentEntityID++;
 
             if (entities.Contains(id)) continue;
 
-            return id;
+            entities.Add(id);
+            break;
         }
 
-        if (currentTry++ == uint.MaxValue) throw new Exception("Ran out of IDs for new entity");
+        if (currentTry == uint.MaxValue) throw new Exception("Ran out of IDs for new entity");
 
-        return 0;
+        return id;
     }
 
     public bool DeleteEntity(uint id)
@@ -62,7 +65,7 @@ class World
         dictionary[entityID] = component;
     }
 
-    public bool RemoveComponent<T>(uint entityID, T component) where T : IComponent
+    public bool RemoveComponent<T>(uint entityID) where T : IComponent
     {
         Dictionary<uint, IComponent> dictionary;
 
@@ -80,5 +83,12 @@ class World
         }
 
         return (T) component;
+    }
+
+    public Dictionary<uint, IComponent> GetAllComponents<T>() where T : IComponent
+    {
+        Dictionary<uint, IComponent> dictionary;
+
+        return components.TryGetValue(typeof(T), out dictionary) ? dictionary : null;
     }
 }

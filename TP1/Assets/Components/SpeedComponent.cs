@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class SpeedComponent : IComponent
 {
-    Vector2 speed;
+    public Vector2 speed;
+
+    public SpeedComponent(Vector2 speed) => this.speed = speed;
 }

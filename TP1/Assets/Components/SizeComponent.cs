@@ -6,5 +6,7 @@ using System.Threading.Tasks;
 
 public class SizeComponent : IComponent
 {
-    int size;
+    public int size;
+
+    public SizeComponent(int size) => this.size = size;
 }

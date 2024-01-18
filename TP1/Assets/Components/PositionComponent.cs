@@ -4,5 +4,7 @@ using UnityEngine;
 
 public class PositionComponent : IComponent
 {
-    Vector2 position;
+    public Vector2 position;
+
+    public PositionComponent(Vector2 position) => this.position = position;
 }

@@ -7,19 +7,12 @@ public class RegisterSystems
     {
         // determine order of systems to add
         var toRegister = new List<ISystem>();
-
+        
         World.currentWorld = new World();
 
         // Add your systems here
-        toRegister.Add(new MovementSystem());
-        toRegister.Add(new CollisionSystem());
-        toRegister.Add(new DestructionSystem());
-        toRegister.Add(new ExplosionSystem());
-        toRegister.Add(new ReboundSystem());
-        toRegister.Add(new ProtectionSystem());
-        toRegister.Add(new ColorSystem());
-        toRegister.Add(new RewindSystem());
-        toRegister.Add(new ClickSystem());
+        toRegister.Add(new CircleLifetimeSystem());
+        toRegister.Add(new RenderSystem());
 
         return toRegister;
     }

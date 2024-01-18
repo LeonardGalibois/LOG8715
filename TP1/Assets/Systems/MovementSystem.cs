@@ -16,7 +16,7 @@ namespace Assets.Systems
             {
                 PositionComponent position = null;//world.GetComponent<PositionComponent>(entity);
 
-                if(true/*world.GetComponent<PositionComponent>(entity) && world. */)
+                if (true/*world.GetComponent<PositionComponent>(entity) && world. */) ;
             }
         }
     }

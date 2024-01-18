@@ -7,5 +7,7 @@ using UnityEngine;
 
 public class ColorComponent : IComponent
 {
-    Color color;
+    public Color color;
+
+    public ColorComponent(Color color) => this.color = color;
 }

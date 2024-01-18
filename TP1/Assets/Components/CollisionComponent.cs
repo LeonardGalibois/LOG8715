@@ -6,5 +6,7 @@ using System.Threading.Tasks;
 
 public class CollisionComponent : IComponent
 {
-    int nbCollisions;
+    public int nbCollisions;
+
+    public CollisionComponent(int nbCollisions) => this.nbCollisions = nbCollisions;
 }

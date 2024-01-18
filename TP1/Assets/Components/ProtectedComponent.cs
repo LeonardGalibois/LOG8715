@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 public class ProtectedComponent : IComponent
 {
-    float duration;
-    float cooldown;
+    public float duration;
+    public float cooldown;
+
+    public ProtectedComponent(float duration, float cooldown) { this.cooldown = cooldown; this.duration = duration; }
 }
