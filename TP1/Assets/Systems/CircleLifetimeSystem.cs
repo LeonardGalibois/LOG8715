@@ -34,15 +34,20 @@ namespace Assets.Systems
 
             if (dictionary is null) return;
 
-            foreach (var item in dictionary)
+            int index = 0;
+            while (index < dictionary.Count)
             {
+                var item = dictionary.ElementAt(index);
                 SizeComponent sizeComponent = item.Value as SizeComponent;
 
-                if (sizeComponent is not null && sizeComponent.size == 0)
+                if (sizeComponent is null || sizeComponent.size > 0)
                 {
-                    World.currentWorld.DeleteEntity(item.Key);
-                    ECSController.Instance.DestroyShape(item.Key);
+                    index++;
+                    continue;
                 }
+
+                World.currentWorld.DeleteEntity(item.Key);
+                ECSController.Instance.DestroyShape(item.Key);
             }
         }
     }

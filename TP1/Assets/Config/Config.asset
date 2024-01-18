@@ -18,9 +18,12 @@ MonoBehaviour:
   protectionDuration: 5
   protectionCooldown: 15
   circleInstancesToSpawn:
-  - initialSize: 2
+  - initialSize: 3
     initialPosition: {x: 5, y: 0}
-    initialVelocity: {x: 1, y: 1}
+    initialVelocity: {x: -2, y: 2}
+  - initialSize: 2
+    initialPosition: {x: -3, y: 0}
+    initialVelocity: {x: -1, y: 2}
   systemsEnabled:
     keys:
     - MovementSystem

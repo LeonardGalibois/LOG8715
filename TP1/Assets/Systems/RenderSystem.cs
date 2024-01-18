@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Systems
 {
@@ -16,11 +17,53 @@ namespace Assets.Systems
             var sizeComponents = World.currentWorld.GetAllComponents<SizeComponent>();
             var colorComponents = World.currentWorld.GetAllComponents<ColorComponent>();
 
+            UpdateColor(colorComponents);
+
+            Render(positionComponents, sizeComponents, colorComponents);
+        }
+
+        void UpdateColor(Dictionary<uint, IComponent> colorComponents)
+        {
+            foreach (var item in colorComponents)
+            {
+                ColorComponent colorComponent = (ColorComponent)item.Value;
+                CollisionComponent collisionComponent = World.currentWorld.GetComponent<CollisionComponent>(item.Key);
+                VelocityComponent velocityComponent = World.currentWorld.GetComponent<VelocityComponent>(item.Key);
+
+                if (Math.Abs(velocityComponent.velocity.magnitude) <= float.Epsilon)
+                {
+                    // Static circle
+                    colorComponent.color = Color.red;
+                }
+                else if (collisionComponent.nbCollisions == 0)
+                {
+                    // No collisions yet
+                    colorComponent.color = Color.blue;
+                }
+                else if (collisionComponent.nbCollisions == ECSController.Instance.Config.explosionSize - 1)
+                {
+                    // Will explode next collision
+                    colorComponent.color = new Color(1f, 0.5f, 0f);
+                }
+                else
+                {
+                    // Has collided
+                    colorComponent.color = Color.green;
+                }
+            }
+        }
+
+        void Render(
+                Dictionary<uint, IComponent> positionComponents,
+                Dictionary<uint, IComponent> sizeComponents,
+                Dictionary<uint, IComponent> colorComponents
+            )
+        {
             if (positionComponents is not null)
             {
                 foreach (var item in positionComponents)
                 {
-                    PositionComponent positionComponent = (PositionComponent) item.Value;
+                    PositionComponent positionComponent = (PositionComponent)item.Value;
                     ECSController.Instance.UpdateShapePosition(item.Key, positionComponent.position);
                 }
             }
