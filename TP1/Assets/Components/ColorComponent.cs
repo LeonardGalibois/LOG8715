@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class ColorComponent : IComponent
+public class ColorComponent : IEntityComponent
 {
     public Color color;
 
     public ColorComponent(Color color) => this.color = color;
+
+    public object Clone() => new ColorComponent(color);
 }

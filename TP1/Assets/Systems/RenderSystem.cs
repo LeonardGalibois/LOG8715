@@ -22,7 +22,7 @@ namespace Assets.Systems
             Render(positionComponents, sizeComponents, colorComponents);
         }
 
-        void UpdateColor(Dictionary<uint, IComponent> colorComponents)
+        void UpdateColor(Dictionary<uint, IEntityComponent> colorComponents)
         {
             foreach (var item in colorComponents)
             {
@@ -54,9 +54,9 @@ namespace Assets.Systems
         }
 
         void Render(
-                Dictionary<uint, IComponent> positionComponents,
-                Dictionary<uint, IComponent> sizeComponents,
-                Dictionary<uint, IComponent> colorComponents
+                Dictionary<uint, IEntityComponent> positionComponents,
+                Dictionary<uint, IEntityComponent> sizeComponents,
+                Dictionary<uint, IEntityComponent> colorComponents
             )
         {
             if (positionComponents is not null)

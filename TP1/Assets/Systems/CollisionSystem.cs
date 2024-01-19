@@ -12,9 +12,9 @@ namespace Assets.Systems
         public string Name { get { return "CollisionSystem"; } }
 
         void CheckBoundsCollisions(
-            Dictionary<uint, IComponent> positionComponents,
-            Dictionary<uint, IComponent> velocityComponents,
-            Dictionary<uint, IComponent> sizeComponents
+            Dictionary<uint, IEntityComponent> positionComponents,
+            Dictionary<uint, IEntityComponent> velocityComponents,
+            Dictionary<uint, IEntityComponent> sizeComponents
             )
         {
             foreach (var item in positionComponents)
@@ -67,10 +67,10 @@ namespace Assets.Systems
         }
 
         public void CheckMutualCollisions(
-            Dictionary<uint, IComponent> positionComponents,
-            Dictionary<uint, IComponent> velocityComponents,
-            Dictionary<uint, IComponent> sizeComponents,
-            Dictionary<uint, IComponent> collisionComponents
+            Dictionary<uint, IEntityComponent> positionComponents,
+            Dictionary<uint, IEntityComponent> velocityComponents,
+            Dictionary<uint, IEntityComponent> sizeComponents,
+            Dictionary<uint, IEntityComponent> collisionComponents
             )
         {
             for (int self = 0; self < positionComponents.Count - 1; self++)

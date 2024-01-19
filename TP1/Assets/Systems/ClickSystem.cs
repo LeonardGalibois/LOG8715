@@ -12,7 +12,7 @@ namespace Assets.Systems
 
         public void UpdateSystem()
         {
-
+            
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 public class World
 {
-    Dictionary<Type, Dictionary<uint, IComponent>> components;
+    public Dictionary<Type, Dictionary<uint, IEntityComponent>> components;
     public List<uint> entities;
     uint currentEntityID = 0;
 
@@ -14,8 +14,26 @@ public class World
 
     public World()
     {
-        components = new Dictionary<Type, Dictionary<uint, IComponent>>();
+        components = new Dictionary<Type, Dictionary<uint, IEntityComponent>>();
         entities = new List<uint>();
+    }
+
+    public List<uint> GetEntitiesCopy() => new List<uint>(entities);
+
+    public Dictionary<Type, Dictionary<uint, IEntityComponent>> GetComponentsCopy()
+    {
+        Dictionary<Type, Dictionary<uint, IEntityComponent>> componentsCopy = new Dictionary<Type, Dictionary<uint, IEntityComponent>>();
+
+        foreach (var item in components)
+        {
+            Dictionary<uint, IEntityComponent> dictionaryCopy = new Dictionary<uint, IEntityComponent>();
+
+            foreach (var component in item.Value) dictionaryCopy[component.Key] = (IEntityComponent)component.Value.Clone();
+
+            componentsCopy[item.Key] = dictionaryCopy;
+        }
+
+        return componentsCopy;
     }
 
     public uint CreateEntity()
@@ -52,30 +70,30 @@ public class World
     }
 
 
-    public void AddComponent<T>(uint entityID, T component) where T : IComponent
+    public void AddComponent<T>(uint entityID, T component) where T : IEntityComponent
     {
-        Dictionary<uint, IComponent> dictionary;
+        Dictionary<uint, IEntityComponent> dictionary;
 
         if (!components.TryGetValue(typeof(T), out dictionary))
         {
-            dictionary = new Dictionary<uint, IComponent>();
+            dictionary = new Dictionary<uint, IEntityComponent>();
             components[typeof(T)] = dictionary;
         }
         
         dictionary[entityID] = component;
     }
 
-    public bool RemoveComponent<T>(uint entityID) where T : IComponent
+    public bool RemoveComponent<T>(uint entityID) where T : IEntityComponent
     {
-        Dictionary<uint, IComponent> dictionary;
+        Dictionary<uint, IEntityComponent> dictionary;
 
         return components.TryGetValue(typeof(T), out dictionary) && dictionary.Remove(entityID);
     }
 
-    public T GetComponent<T>(uint entityID) where T : IComponent
+    public T GetComponent<T>(uint entityID) where T : IEntityComponent
     {
-        Dictionary<uint, IComponent> dictionary;
-        IComponent component = null;
+        Dictionary<uint, IEntityComponent> dictionary;
+        IEntityComponent component = null;
 
         if (components.TryGetValue(typeof(T), out dictionary))
         {
@@ -85,9 +103,9 @@ public class World
         return (T) component;
     }
 
-    public Dictionary<uint, IComponent> GetAllComponents<T>() where T : IComponent
+    public Dictionary<uint, IEntityComponent> GetAllComponents<T>() where T : IEntityComponent
     {
-        Dictionary<uint, IComponent> dictionary;
+        Dictionary<uint, IEntityComponent> dictionary;
 
         return components.TryGetValue(typeof(T), out dictionary) ? dictionary : null;
     }
