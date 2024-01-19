@@ -31,7 +31,7 @@ namespace Assets.Systems
 
         public void UpdateSystem()
         {
-            if (Input.GetKeyDown(KeyCode.Space) && Time.time >= nextAvailableRewindTime)
+            if (Input.GetKeyDown(KeyCode.Space) && CanRewind())
             {
                 nextAvailableRewindTime = Time.time + cooldown;
 
@@ -45,6 +45,8 @@ namespace Assets.Systems
                 TakeSnapshot();
             }
         }
+
+        bool CanRewind() => Time.time >= nextAvailableRewindTime;
 
         void Rewind()
         {
