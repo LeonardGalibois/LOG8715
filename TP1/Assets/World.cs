@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 public class World
 {
@@ -49,20 +50,22 @@ public class World
             if (entities.Contains(id)) continue;
 
             entities.Add(id);
+           
             break;
         }
 
         if (currentTry == uint.MaxValue) throw new Exception("Ran out of IDs for new entity");
 
+
         return id;
     }
 
-    public bool DeleteEntity(uint id)
+    public bool DeleteEntity(uint entityID)
     {
-        if (entities.Remove(id))
+        if (entities.Remove(entityID))
         {
             // Remove all components for the deleted entity
-            foreach (var dictionary in components.Values) dictionary.Remove(id);
+            foreach (var dictionary in components.Values) dictionary.Remove(entityID);
 
             return true;
         }
@@ -107,6 +110,6 @@ public class World
     {
         Dictionary<uint, IEntityComponent> dictionary;
 
-        return components.TryGetValue(typeof(T), out dictionary) ? dictionary : null;
+        return components.TryGetValue(typeof(T), out dictionary) ? new Dictionary<uint, IEntityComponent>(dictionary) : null;
     }
 }

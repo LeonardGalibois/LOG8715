@@ -54,6 +54,7 @@ public class ECSController : MonoBehaviour
     
     public void CreateShape(uint id, int initialSize)
     {
+        Debug.Log($"Creating new shape with ID {id}");
         var instance = Instantiate(circlePrefab);
         instance.transform.localScale *= initialSize;
         _gameObjectsForDisplay[id] = instance;
@@ -63,6 +64,7 @@ public class ECSController : MonoBehaviour
 
     public void DestroyShape(uint id)
     {
+        Debug.Log($"Destroying shape with ID {id}");
         Destroy(_gameObjectsForDisplay[id]);
         _gameObjectsForDisplay.Remove(id);
         _spriteRenderersCache.Remove(id);

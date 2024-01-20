@@ -52,6 +52,22 @@ namespace Assets.Systems
         {
             if (oldestSnapshot is null) return;
 
+            // Add previously added shapes
+            foreach (uint entity in oldestSnapshot.entities)
+            {
+                if (World.currentWorld.entities.Contains(entity)) continue;
+
+                ECSController.Instance.CreateShape(entity, 1);
+            }
+
+            // Remove newly added shapes
+            foreach (uint entity in World.currentWorld.entities)
+            {
+                if (oldestSnapshot.entities.Contains(entity)) continue;
+
+                else ECSController.Instance.DestroyShape(entity);
+            }
+
             World.currentWorld.entities = oldestSnapshot.entities;
             World.currentWorld.components = oldestSnapshot.components;
         }

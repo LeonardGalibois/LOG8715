@@ -10,19 +10,13 @@ namespace Assets.Systems
 {
     public class CircleLifetimeSystem : ISystem
     {
+        const int MIN_SIZE_TO_STAY_ALIVE_WHEN_CLICKED = 4;
+
         public CircleLifetimeSystem()
         {
             foreach (ShapeConfig shapeConfig in ECSController.Instance.Config.circleInstancesToSpawn)
             {
-                uint entity = World.currentWorld.CreateEntity();
-
-                World.currentWorld.AddComponent(entity, new PositionComponent(shapeConfig.initialPosition));
-                World.currentWorld.AddComponent(entity, new SizeComponent(shapeConfig.initialSize));
-                World.currentWorld.AddComponent(entity, new VelocityComponent(shapeConfig.initialVelocity));
-                World.currentWorld.AddComponent(entity, new ColorComponent(Color.white));
-                World.currentWorld.AddComponent(entity, new CollisionComponent(0));
-
-                ECSController.Instance.CreateShape(entity, shapeConfig.initialSize);
+                CircleUtils.CreateCircle(shapeConfig.initialPosition, shapeConfig.initialVelocity, shapeConfig.initialSize);
             }
         }
 
@@ -30,24 +24,41 @@ namespace Assets.Systems
 
         public void UpdateSystem()
         {
+            VerifyClickedCircles();
+            CleanUpDeadCircles();
+        }
+
+        void VerifyClickedCircles()
+        {
+            var clickedComponents = World.currentWorld.GetAllComponents<ClickedComponent>();
+            if (clickedComponents is null) return;
+
+            foreach (uint entityID in clickedComponents.Keys)
+            {
+                var sizeComponent = World.currentWorld.GetComponent<SizeComponent>(entityID);
+                if (sizeComponent is null) continue;
+
+                if (sizeComponent.size < MIN_SIZE_TO_STAY_ALIVE_WHEN_CLICKED)
+                {
+                    CircleUtils.DestroyCircle(entityID);
+                }
+            }
+        }
+
+        void CleanUpDeadCircles()
+        {
             var dictionary = World.currentWorld.GetAllComponents<SizeComponent>();
 
             if (dictionary is null) return;
 
-            int index = 0;
-            while (index < dictionary.Count)
+            foreach (var item in dictionary)
             {
-                var item = dictionary.ElementAt(index);
-                SizeComponent sizeComponent = item.Value as SizeComponent;
+                uint entityID = item.Key;
+                SizeComponent sizeComponent = (SizeComponent)item.Value;
 
-                if (sizeComponent is null || sizeComponent.size > 0)
-                {
-                    index++;
-                    continue;
-                }
+                if (sizeComponent is null || sizeComponent.size > 0) continue;
 
-                World.currentWorld.DeleteEntity(item.Key);
-                ECSController.Instance.DestroyShape(item.Key);
+                CircleUtils.DestroyCircle(entityID);
             }
         }
     }
