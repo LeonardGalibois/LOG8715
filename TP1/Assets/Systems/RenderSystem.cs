@@ -29,26 +29,46 @@ namespace Assets.Systems
                 ColorComponent colorComponent = (ColorComponent)item.Value;
                 CollisionComponent collisionComponent = World.currentWorld.GetComponent<CollisionComponent>(item.Key);
                 VelocityComponent velocityComponent = World.currentWorld.GetComponent<VelocityComponent>(item.Key);
+                SizeComponent sizeComponent = World.currentWorld.GetComponent<SizeComponent>(item.Key);
 
                 if (Math.Abs(velocityComponent.velocity.magnitude) <= float.Epsilon)
                 {
                     // Static circle
                     colorComponent.color = Color.red;
                 }
-                else if (collisionComponent.nbCollisions == 0)
-                {
-                    // No collisions yet
-                    colorComponent.color = Color.blue;
-                }
-                else if (collisionComponent.nbCollisions == ECSController.Instance.Config.explosionSize - 1)
-                {
-                    // Will explode next collision
-                    colorComponent.color = new Color(1f, 0.5f, 0f);
-                }
                 else
                 {
-                    // Has collided
-                    colorComponent.color = Color.green;
+                    if (World.currentWorld.GetComponent<CreatedTagComponent>(item.Key) != null)
+                    {
+                        // If it has exploded
+                        colorComponent.color = new Color(1, 0.1f, 0.4f);
+                        World.currentWorld.RemoveComponent<CreatedTagComponent>(item.Key);
+                        continue;
+                    }
+
+                    if (World.currentWorld.GetComponent<CollidedTagComponent>(item.Key) != null)
+                    {
+                        // If it has collided
+                        colorComponent.color = Color.green;
+                        World.currentWorld.RemoveComponent<CollidedTagComponent>(item.Key);
+                        continue;
+                    }
+
+                    if (sizeComponent.size == ECSController.Instance.Config.explosionSize - 1)
+                    {
+                        colorComponent.color = new Color(1, 0.5f, 0);
+                        continue;
+                    }
+
+                    if (sizeComponent.size <= ECSController.Instance.Config.protectionSize)
+                    {
+                        colorComponent.color = new Color(0.3f, 0.3f, 1);
+                        continue;
+                    }
+
+                    
+
+                    colorComponent.color = new Color(0, 0, 0.25f);
                 }
             }
         }

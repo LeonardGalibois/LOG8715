@@ -70,11 +70,12 @@ namespace Assets.Systems
 
                 Debug.Log($"Creating a new child {i + 1} at {parentPosition + childDirection * CHILD_CELL_OFFSET} toward {childDirection * parentSpeed}");
                 
-                CircleUtils.CreateCircle(
+                uint id = CircleUtils.CreateCircle(
                     parentPosition + childDirection * CHILD_CELL_OFFSET,
                     childDirection * parentSpeed,
                     childrenSize
                 );
+                World.currentWorld.AddComponent<CreatedTagComponent>(id, new CreatedTagComponent());
             }
         }
     }

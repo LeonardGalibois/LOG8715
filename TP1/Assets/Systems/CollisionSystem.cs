@@ -113,16 +113,26 @@ namespace Assets.Systems
                     otherPositionComponent.position = collision.position2;
                     otherVelocityComponent.velocity = collision.velocity2;
 
-                    if (selfSizeComponent.size < otherSizeComponent.size)
+                    // Only change size if they are both moving
+                    if (Math.Abs(otherVelocityComponent.velocity.magnitude) > float.Epsilon &&
+                        Math.Abs(selfVelocityComponent.velocity.magnitude) > float.Epsilon)
                     {
-                        selfSizeComponent.size--;
-                        otherSizeComponent.size++;
+                        if (selfSizeComponent.size < otherSizeComponent.size)
+                        {
+                            selfSizeComponent.size--;
+                            otherSizeComponent.size++;
+                        }
+                        else if (selfSizeComponent.size > otherSizeComponent.size)
+                        {
+                            selfSizeComponent.size++;
+                            otherSizeComponent.size--;
+                        }
                     }
-                    else if (selfSizeComponent.size > otherSizeComponent.size)
-                    {
-                        selfSizeComponent.size++;
-                        otherSizeComponent.size--;
-                    }
+                    
+
+                    // Add a tag to specify that there was a collision
+                    World.currentWorld.AddComponent<CollidedTagComponent>(selfEntityID, new CollidedTagComponent());
+                    World.currentWorld.AddComponent<CollidedTagComponent>(otherEntityID, new CollidedTagComponent());
                 }
             }
         }
