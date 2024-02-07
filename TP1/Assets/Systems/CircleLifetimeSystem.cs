@@ -12,11 +12,18 @@ namespace Assets.Systems
     {
         const int MIN_SIZE_TO_STAY_ALIVE_WHEN_CLICKED = 4;
 
-        public CircleLifetimeSystem()
+        private bool IsRepeatedSystem { get; set; }
+
+        public CircleLifetimeSystem(bool isRepeatedSystem = false)
         {
-            foreach (ShapeConfig shapeConfig in ECSController.Instance.Config.circleInstancesToSpawn)
+            IsRepeatedSystem = isRepeatedSystem;
+
+            if (!IsRepeatedSystem)
             {
-                CircleUtils.CreateCircle(shapeConfig.initialPosition, shapeConfig.initialVelocity, shapeConfig.initialSize);
+                foreach (ShapeConfig shapeConfig in ECSController.Instance.Config.circleInstancesToSpawn)
+                {
+                    CircleUtils.CreateCircle(shapeConfig.initialPosition, shapeConfig.initialVelocity, shapeConfig.initialSize);
+                }
             }
         }
 
@@ -24,7 +31,8 @@ namespace Assets.Systems
 
         public void UpdateSystem()
         {
-            VerifyClickedCircles();
+            if(!IsRepeatedSystem) VerifyClickedCircles();
+
             CleanUpDeadCircles();
         }
 
