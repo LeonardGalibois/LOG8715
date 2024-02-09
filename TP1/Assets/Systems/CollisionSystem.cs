@@ -70,7 +70,9 @@ namespace Assets.Systems
             Dictionary<uint, IEntityComponent> positionComponents,
             Dictionary<uint, IEntityComponent> velocityComponents,
             Dictionary<uint, IEntityComponent> sizeComponents,
-            Dictionary<uint, IEntityComponent> collisionComponents
+            Dictionary<uint, IEntityComponent> collisionComponents,
+            Dictionary<uint, IEntityComponent> protectedComponents
+
             )
         {
             for (int self = 0; self < positionComponents.Count - 1; self++)
@@ -84,6 +86,7 @@ namespace Assets.Systems
                     SizeComponent selfSizeComponent = (SizeComponent)sizeComponents[selfEntityID];
                     VelocityComponent selfVelocityComponent = (VelocityComponent)velocityComponents[selfEntityID];
                     CollisionComponent selfCollisionComponent = (CollisionComponent)collisionComponents[selfEntityID];
+                    ProtectedComponent selfProtectedComponent = (ProtectedComponent)protectedComponents[selfEntityID];
 
                     uint otherEntityID = positionComponents.Keys.ElementAt(other);
                     PositionComponent otherPositionComponent = (PositionComponent)positionComponents.Values.ElementAt(other);
@@ -113,16 +116,41 @@ namespace Assets.Systems
                     otherPositionComponent.position = collision.position2;
                     otherVelocityComponent.velocity = collision.velocity2;
 
-                    if (selfSizeComponent.size < otherSizeComponent.size)
+                    //saving the number of collisions with the same circle
+                    if (selfSizeComponent.size == otherSizeComponent.size)
                     {
-                        selfSizeComponent.size--;
-                        otherSizeComponent.size++;
+                        selfCollisionComponent.nbSameSizeCollisions++;
+                    }
+
+
+                    else if (selfSizeComponent.size < otherSizeComponent.size)
+                    {
+                        if (protectedComponents.duration < ECSController.Instance.Config.protectionDuration)
+                        {
+                            otherSizeComponent.size--;
+                        }
+                        else
+                        {
+                            selfSizeComponent.size--;
+                            otherSizeComponent.size++;
+                        }
+                        
                     }
                     else if (selfSizeComponent.size > otherSizeComponent.size)
                     {
-                        selfSizeComponent.size++;
-                        otherSizeComponent.size--;
+                        if (protectedComponents.duration < ECSController.Instance.Config.protectionDuration)
+                        {
+                            otherSizeComponent.size++;
+                        }
+
+                        else
+                        {
+                            selfSizeComponent.size++;
+                            otherSizeComponent.size--;
+                        }
+                        
                     }
+                    
                 }
             }
         }
@@ -135,10 +163,11 @@ namespace Assets.Systems
             var velocityComponents = World.currentWorld.GetAllComponents<VelocityComponent>();
             var sizeComponents = World.currentWorld.GetAllComponents<SizeComponent>();
             var collisionComponents = World.currentWorld.GetAllComponents<CollisionComponent>();
+            var protectedComponents = World.currentWorld.GetAllComponents<ProtectedComponent>();
 
             CheckBoundsCollisions(positionComponents, velocityComponents, sizeComponents);
 
-            CheckMutualCollisions(positionComponents, velocityComponents, sizeComponents, collisionComponents);
+            CheckMutualCollisions(positionComponents, velocityComponents, sizeComponents, collisionComponents, protectedComponents);
         }
     }
 }

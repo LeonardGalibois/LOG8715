@@ -8,8 +8,9 @@ public class ProtectedComponent : IEntityComponent
 {
     public float duration;
     public float cooldown;
-
-    public ProtectedComponent(float duration, float cooldown) { this.cooldown = cooldown; this.duration = duration; }
-
+    public ProtectedComponent(float duration, float cooldown) 
+    { 
+        this.cooldown = cooldown; this.duration = duration; 
+    }
     public object Clone() => new ProtectedComponent(duration, cooldown);
 }

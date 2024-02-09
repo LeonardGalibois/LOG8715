@@ -17,6 +17,7 @@ public class RegisterSystems
         toRegister.Add(new CollisionSystem());
         toRegister.Add(new RenderSystem());
         toRegister.Add(new ExplosionSystem());
+        toRegister.Add(new ProtectionSystem());
         toRegister.Add(new RewindSystem()); // Make sure this is the last system registered
 
         return toRegister;

@@ -7,8 +7,12 @@ using System.Threading.Tasks;
 public class CollisionComponent : IEntityComponent
 {
     public int nbCollisions;
+    public int nbSameSizeCollisions;
 
-    public CollisionComponent(int nbCollisions) => this.nbCollisions = nbCollisions;
+    public CollisionComponent(int nbCollisions, int nbSameSizeCollisions) 
+    { 
+        this.nbCollisions = nbCollisions; this.nbSameSizeCollisions = nbSameSizeCollisions;
+    }
 
-    public object Clone() => new CollisionComponent(nbCollisions);
+    public object Clone() => new CollisionComponent(nbCollisions, nbSameSizeCollisions);
 }

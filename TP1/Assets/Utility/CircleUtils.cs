@@ -14,7 +14,8 @@ public class CircleUtils
         World.currentWorld.AddComponent(entity, new SizeComponent(size));
         World.currentWorld.AddComponent(entity, new VelocityComponent(velocity));
         World.currentWorld.AddComponent(entity, new ColorComponent(Color.white));
-        World.currentWorld.AddComponent(entity, new CollisionComponent(0));
+        World.currentWorld.AddComponent(entity, new CollisionComponent(0,0));
+        World.currentWorld.AddComponent(entity, new ProtectedComponent(0f,0f));
         ECSController.Instance.CreateShape(entity, size);
 
         return entity;
