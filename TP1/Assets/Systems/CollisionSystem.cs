@@ -11,6 +11,12 @@ namespace Assets.Systems
     {
         public string Name { get { return "CollisionSystem"; } }
 
+        private bool IsRepeatedSystem { get; set; }
+        public CollisionSystem(bool isRepeatedSystem = false)
+        {
+            IsRepeatedSystem = isRepeatedSystem;
+        }
+
         void CheckBoundsCollisions(
             Dictionary<uint, IEntityComponent> positionComponents,
             Dictionary<uint, IEntityComponent> velocityComponents,
@@ -22,6 +28,10 @@ namespace Assets.Systems
                 PositionComponent positionComponent = (PositionComponent)item.Value;
                 VelocityComponent velocityComponent = (VelocityComponent)velocityComponents[item.Key];
                 SizeComponent sizeComponent = (SizeComponent)sizeComponents[item.Key];
+
+                // if we are repeating the simulation and the circle is on the left side, we want to continue the iteration
+                // otherwise we skip to the next one
+                if (IsRepeatedSystem && positionComponent.position.x > 0) continue;
 
                 Vector3 bounds = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight, Camera.main.nearClipPlane));
 
@@ -116,6 +126,7 @@ namespace Assets.Systems
                     otherPositionComponent.position = collision.position2;
                     otherVelocityComponent.velocity = collision.velocity2;
 
+<<<<<<< HEAD
                     //saving the number of collisions with the same circle
                     if (selfSizeComponent.size == otherSizeComponent.size)
                     {
@@ -130,10 +141,18 @@ namespace Assets.Systems
                             otherSizeComponent.size--;
                         }
                         else
+=======
+                    // Only change size if they are both moving
+                    if (Math.Abs(otherVelocityComponent.velocity.magnitude) > float.Epsilon &&
+                        Math.Abs(selfVelocityComponent.velocity.magnitude) > float.Epsilon)
+                    {
+                        if (selfSizeComponent.size < otherSizeComponent.size)
+>>>>>>> 319a4f19757829557235046455252b93d693d4d8
                         {
                             selfSizeComponent.size--;
                             otherSizeComponent.size++;
                         }
+<<<<<<< HEAD
                         
                     }
                     else if (selfSizeComponent.size > otherSizeComponent.size)
@@ -144,13 +163,25 @@ namespace Assets.Systems
                         }
 
                         else
+=======
+                        else if (selfSizeComponent.size > otherSizeComponent.size)
+>>>>>>> 319a4f19757829557235046455252b93d693d4d8
                         {
                             selfSizeComponent.size++;
                             otherSizeComponent.size--;
                         }
+<<<<<<< HEAD
                         
                     }
                     
+=======
+                    }
+                    
+
+                    // Add a tag to specify that there was a collision
+                    World.currentWorld.AddComponent<CollidedTagComponent>(selfEntityID, new CollidedTagComponent());
+                    World.currentWorld.AddComponent<CollidedTagComponent>(otherEntityID, new CollidedTagComponent());
+>>>>>>> 319a4f19757829557235046455252b93d693d4d8
                 }
             }
         }

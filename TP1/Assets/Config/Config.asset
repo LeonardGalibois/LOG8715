@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44f6298b63162af49b161af8f69d4513, type: 3}
   m_Name: Config
   m_EditorClassIdentifier: 
-  explosionSize: 10
+  explosionSize: 8
   protectionSize: 2
   protectionCollisionCount: 3
   protectionDuration: 5
@@ -24,6 +24,12 @@ MonoBehaviour:
   - initialSize: 2
     initialPosition: {x: -3, y: 0}
     initialVelocity: {x: -1, y: 2}
+  - initialSize: 7
+    initialPosition: {x: -7, y: 4}
+    initialVelocity: {x: -1, y: 2}
+  - initialSize: 3
+    initialPosition: {x: 7, y: 4}
+    initialVelocity: {x: 0, y: 0}
   systemsEnabled:
     keys:
     - MovementSystem

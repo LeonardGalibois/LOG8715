@@ -15,6 +15,13 @@ namespace Assets.Systems
         const int MIN_SIZE_TO_EXPLODE_WHEN_CLICKED = 4;
         public string Name { get { return "ExplosionSystem"; } }
 
+        private bool IsRepeatedSystem { get; set; }
+
+        public ExplosionSystem(bool isRepeatedSystem = false)
+        {
+            IsRepeatedSystem = isRepeatedSystem;
+        }
+
         public void UpdateSystem()
         {
             VerifyCirclesClicked();
@@ -31,6 +38,13 @@ namespace Assets.Systems
                 Debug.Log("Clicked!");
                 SizeComponent sizeComponent = World.currentWorld.GetComponent<SizeComponent>(entityID);
                 if (sizeComponent is null || sizeComponent.size < MIN_SIZE_TO_EXPLODE_WHEN_CLICKED) continue;
+
+                var positionComponent = World.currentWorld.GetComponent<PositionComponent>(entityID);
+
+                // if we are repeating the simulation and the circle is on the left side, we want to continue the iteration
+                // otherwise we skip to the next one
+                if (IsRepeatedSystem && positionComponent.position.x > 0) continue;
+
                 Debug.Log("Went through");
                 Explode(entityID, sizeComponent.size);
             }
@@ -39,11 +53,16 @@ namespace Assets.Systems
         void CheckForCirclesThatShouldExplode()
         {
             var sizeComponents = World.currentWorld.GetAllComponents<SizeComponent>();
-
+            
             foreach (var item in sizeComponents)
             {
                 uint entity = item.Key;
                 SizeComponent sizeComponent = (SizeComponent)item.Value;
+                var positionComponent = World.currentWorld.GetComponent<PositionComponent>(entity);
+
+                // if we are repeating the simulation and the circle is on the left side, we want to continue the iteration
+                // otherwise we skip to the next one
+                if (IsRepeatedSystem && positionComponent.position.x > 0) continue;
 
                 if (sizeComponent.size == ECSController.Instance.Config.explosionSize) Explode(entity, sizeComponent.size);
             }
@@ -70,11 +89,12 @@ namespace Assets.Systems
 
                 Debug.Log($"Creating a new child {i + 1} at {parentPosition + childDirection * CHILD_CELL_OFFSET} toward {childDirection * parentSpeed}");
                 
-                CircleUtils.CreateCircle(
+                uint id = CircleUtils.CreateCircle(
                     parentPosition + childDirection * CHILD_CELL_OFFSET,
                     childDirection * parentSpeed,
                     childrenSize
                 );
+                World.currentWorld.AddComponent<CreatedTagComponent>(id, new CreatedTagComponent());
             }
         }
     }
