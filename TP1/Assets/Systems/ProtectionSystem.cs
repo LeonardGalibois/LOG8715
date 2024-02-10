@@ -11,38 +11,37 @@ namespace Assets.Systems
     {
         public string Name { get { return "ProtectionSystem"; } }
 
-        void CheckProtectableEntities(
-            Dictionary<uint, IEntityComponent> collisionComponents,
-            Dictionary<uint, IEntityComponent> sizeComponents,
-            Dictionary<uint, IEntityComponent> protectedComponents
-            )
+        public void UpdateSystem()
         {
-            foreach (var item in collisionComponents)
-            {
-                CollisionComponent collisionComponent = (CollisionComponent)item.Value;
-                SizeComponent sizeComponent = (SizeComponent)item.Value;
-                ProtectedComponent protectedComponent = (ProtectedComponent)protectedComponents[item.Key];
-                //ProtectedComponent protectedComponent = World.currentWorld.GetComponent<ProtectedComponent>(item.Key);
+            CheckProtectableEntities();
+        }
 
-                if (sizeComponent.size <= ECSController.Instance.Config.protectionSize 
-                  && collisionComponent.nbSameSizeCollisions ==  ECSController.Instance.Config.protectionCollisionCount
-                  && protectedComponent.cooldown <= 0f)
+        void CheckProtectableEntities()
+        {
+            foreach(uint entity in World.currentWorld.entities)
+            {   
+                CollisionComponent collision = World.currentWorld.GetComponent<CollisionComponent>(entity);
+                SizeComponent size = World.currentWorld.GetComponent<SizeComponent>(entity);
+                ProtectedComponent protect = World.currentWorld.GetComponent<ProtectedComponent>(entity);
+
+                if (size.size <= ECSController.Instance.Config.protectionSize 
+                  && collision.nbSameSizeCollisions ==  ECSController.Instance.Config.protectionCollisionCount
+                  && protect.cooldown <= 0f)
                   {
-                      protectedComponent.duration = 0f;
-                      protectedComponent.duration += Time.deltaTime;
+                      protect.duration += Time.deltaTime;
+
+                      if (protect.duration >= ECSController.Instance.Config.protectionDuration)
+                      {
+                        protect.duration = 0.0f;
+                        protect.cooldown += Time.deltaTime;
+                      }
                   }
                 
-                if (protectedComponent.duration >= ECSController.Instance.Config.protectionDuration)
+                else if(protect.cooldown >= ECSController.Instance.Config.protectionCooldown)
                 {
-                    protectedComponent.cooldown = 0f;
-                    protectedComponent.cooldown += Time.deltaTime;
+                    protect.cooldown += 0.0f;
                 }
         }   
     }
-
-    public void UpdateSystem()
-        {
-
-        }
 }
 }

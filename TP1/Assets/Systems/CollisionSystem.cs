@@ -95,7 +95,7 @@ namespace Assets.Systems
                     SizeComponent selfSizeComponent = (SizeComponent)sizeComponents[selfEntityID];
                     VelocityComponent selfVelocityComponent = (VelocityComponent)velocityComponents[selfEntityID];
                     CollisionComponent selfCollisionComponent = (CollisionComponent)collisionComponents[selfEntityID];
-                    ProtectedComponent selfProtectedComponent = (ProtectedComponent)protectedComponents[selfEntityID];
+                    ProtectedComponent protectedComponent = World.currentWorld.GetComponent<ProtectedComponent>(item.Key);
 
                     uint otherEntityID = positionComponents.Keys.ElementAt(other);
                     PositionComponent otherPositionComponent = (PositionComponent)positionComponents.Values.ElementAt(other);
@@ -138,7 +138,8 @@ namespace Assets.Systems
 
                         else if (selfSizeComponent.size < otherSizeComponent.size)
                         {
-                            if (protectedComponents.duration < ECSController.Instance.Config.protectionDuration)
+                            // If circle is protected, the colliding bigger circle decreases by 1
+                            if (0.0f < protectedComponent.duration && protectedComponent.duration < ECSController.Instance.Config.protectionDuration)
                             {
                                 otherSizeComponent.size--;
                             }
@@ -151,10 +152,8 @@ namespace Assets.Systems
                     }
                         else if (selfSizeComponent.size > otherSizeComponent.size)
                         {
-                            if (protectedComponents.duration < ECSController.Instance.Config.protectionDuration)
-                            {
-                                otherSizeComponent.size++;
-                            }
+                            // If the circle is protected, the colliding smaller circle does not decrease
+                            if (0.0f < protectedComponent.duration && protectedComponent.duration < ECSController.Instance.Config.protectionDuration) continue; 
 
                             else
                             {

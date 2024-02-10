@@ -10,7 +10,7 @@ public class ProtectedComponent : IEntityComponent
     public float cooldown;
     public ProtectedComponent(float duration, float cooldown) 
     { 
-        this.cooldown = cooldown; this.duration = duration; 
+        this.duration = duration; this.cooldown = cooldown; 
     }
     public object Clone() => new ProtectedComponent(duration, cooldown);
 }
