@@ -30,6 +30,7 @@ namespace Assets.Systems
                 CollisionComponent collisionComponent = World.currentWorld.GetComponent<CollisionComponent>(item.Key);
                 VelocityComponent velocityComponent = World.currentWorld.GetComponent<VelocityComponent>(item.Key);
                 SizeComponent sizeComponent = World.currentWorld.GetComponent<SizeComponent>(item.Key);
+                ProtectedComponent protectedComponent = World.currentWorld.GetComponent<ProtectedComponent>(item.Key);
 
                 if (Math.Abs(velocityComponent.velocity.magnitude) <= float.Epsilon)
                 {
@@ -54,6 +55,18 @@ namespace Assets.Systems
                         continue;
                     }
 
+                    if (protectedComponent.duration > 0)
+                    {
+                        colorComponent.color = new Color(1, 1, 1);
+                        continue;
+                    }
+
+                    if (protectedComponent.cooldown > 0)
+                    {
+                        colorComponent.color = new Color(1, 1, 0);
+                        continue;
+                    }
+
                     if (sizeComponent.size == ECSController.Instance.Config.explosionSize - 1)
                     {
                         colorComponent.color = new Color(1, 0.5f, 0);
@@ -64,9 +77,7 @@ namespace Assets.Systems
                     {
                         colorComponent.color = new Color(0.3f, 0.3f, 1);
                         continue;
-                    }
-
-                    
+                    }  
 
                     colorComponent.color = new Color(0, 0, 0.25f);
                 }

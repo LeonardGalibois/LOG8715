@@ -25,23 +25,24 @@ namespace Assets.Systems
                 ProtectedComponent protect = World.currentWorld.GetComponent<ProtectedComponent>(entity);
 
                 if (size.size <= ECSController.Instance.Config.protectionSize 
-                  && collision.nbSameSizeCollisions ==  ECSController.Instance.Config.protectionCollisionCount
+                  && collision.nbSameSizeCollisions >=  ECSController.Instance.Config.protectionCollisionCount
                   && protect.cooldown <= 0.0f && protect.duration < ECSController.Instance.Config.protectionDuration)
-                  {
-                      protect.duration += Time.deltaTime;
-                  }
-
-                else if (protect.duration >= ECSController.Instance.Config.protectionDuration)
-                      {
-                        protect.duration = 0.0f;
-                        protect.cooldown += Time.deltaTime;
-                      }
-            
-                else if(protect.cooldown >= ECSController.Instance.Config.protectionCooldown)
                 {
-                    protect.cooldown += 0.0f;
+                      protect.duration += Time.deltaTime;
                 }
-        }   
+                else if (protect.duration >= ECSController.Instance.Config.protectionDuration)      
+                {
+                    
+                    protect.duration = 0.0f;
+                    collision.nbSameSizeCollisions = 0;
+                    protect.cooldown = ECSController.Instance.Config.protectionCooldown;
+                }
+            
+                if(protect.cooldown > 0)
+                {
+                    protect.cooldown -= Time.deltaTime;
+                }
+            }   
+        }
     }
-}
 }

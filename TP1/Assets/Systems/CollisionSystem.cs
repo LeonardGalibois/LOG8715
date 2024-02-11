@@ -133,6 +133,7 @@ namespace Assets.Systems
                         if (selfSizeComponent.size == otherSizeComponent.size)
                         {
                             selfCollisionComponent.nbSameSizeCollisions++;
+                            otherCollisionComponent.nbSameSizeCollisions++;
                         }
 
 
