@@ -23,7 +23,7 @@ namespace Assets.Systems
 
                 // if we are repeating the simulation and the circle is on the left side, we want to continue the iteration
                 // otherwise we skip to the next one
-                if (IsRepeatedSystem && position.position.x > 0) continue;
+                if (IsRepeatedSystem && (position.position.x - Camera.main.transform.position.x) > 0) continue;
 
                 if (speed != null && position != null)
                 {

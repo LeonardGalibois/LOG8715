@@ -43,7 +43,7 @@ namespace Assets.Systems
 
                 // if we are repeating the simulation and the circle is on the left side, we want to continue the iteration
                 // otherwise we skip to the next one
-                if (IsRepeatedSystem && positionComponent.position.x > 0) continue;
+                if (IsRepeatedSystem && (positionComponent.position.x - Camera.main.transform.position.x) > 0) continue;
 
                 Debug.Log("Went through");
                 Explode(entityID, sizeComponent.size);

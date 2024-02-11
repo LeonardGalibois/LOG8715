@@ -31,7 +31,7 @@ namespace Assets.Systems
 
                 // if we are repeating the simulation and the circle is on the left side, we want to continue the iteration
                 // otherwise we skip to the next one
-                if (IsRepeatedSystem && positionComponent.position.x > 0) continue;
+                if (IsRepeatedSystem && (positionComponent.position.x - Camera.main.transform.position.x) > 0) continue;
 
                 Vector3 bounds = Camera.main.ScreenToWorldPoint(new Vector3(Camera.main.pixelWidth, Camera.main.pixelHeight, Camera.main.nearClipPlane));
 
