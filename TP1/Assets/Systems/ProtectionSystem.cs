@@ -26,17 +26,17 @@ namespace Assets.Systems
 
                 if (size.size <= ECSController.Instance.Config.protectionSize 
                   && collision.nbSameSizeCollisions ==  ECSController.Instance.Config.protectionCollisionCount
-                  && protect.cooldown <= 0f)
+                  && protect.cooldown <= 0.0f && protect.duration < ECSController.Instance.Config.protectionDuration)
                   {
                       protect.duration += Time.deltaTime;
+                  }
 
-                      if (protect.duration >= ECSController.Instance.Config.protectionDuration)
+                else if (protect.duration >= ECSController.Instance.Config.protectionDuration)
                       {
                         protect.duration = 0.0f;
                         protect.cooldown += Time.deltaTime;
                       }
-                  }
-                
+            
                 else if(protect.cooldown >= ECSController.Instance.Config.protectionCooldown)
                 {
                     protect.cooldown += 0.0f;
