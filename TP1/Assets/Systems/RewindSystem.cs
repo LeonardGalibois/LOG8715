@@ -31,13 +31,17 @@ namespace Assets.Systems
 
         public void UpdateSystem()
         {
-            if (Input.GetKeyDown(KeyCode.Space) && CanRewind())
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                nextAvailableRewindTime = Time.time + cooldown;
+                if (CanRewind())
+                {
+                    nextAvailableRewindTime = Time.time + cooldown;
 
-                Debug.Log($"Rewinding {rewindTime} seconds in the past...");
+                    Debug.Log($"Rewinding {rewindTime} seconds in the past...");
 
-                Rewind();
+                    Rewind();
+                }
+                else Debug.Log($"Rewind is on cooldown for another { nextAvailableRewindTime - Time.time } seconds");
             }
             else
             {
