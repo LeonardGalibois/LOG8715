@@ -14,22 +14,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionSize: 8
   protectionSize: 2
-  protectionCollisionCount: 3
+  protectionCollisionCount: 2
   protectionDuration: 5
-  protectionCooldown: 15
+  protectionCooldown: 5
   circleInstancesToSpawn:
-  - initialSize: 4
+  - initialSize: 2
     initialPosition: {x: 5, y: 0}
     initialVelocity: {x: -2, y: 2}
   - initialSize: 2
     initialPosition: {x: -3, y: 0}
     initialVelocity: {x: -1, y: 2}
-  - initialSize: 7
+  - initialSize: 2
     initialPosition: {x: -7, y: 4}
     initialVelocity: {x: -1, y: 2}
-  - initialSize: 3
+  - initialSize: 2
     initialPosition: {x: 7, y: 4}
-    initialVelocity: {x: 0, y: 0}
+    initialVelocity: {x: 1, y: 2}
+  - initialSize: 2
+    initialPosition: {x: 5, y: 4}
+    initialVelocity: {x: 3, y: 2}
+  - initialSize: 2
+    initialPosition: {x: 5, y: 2}
+    initialVelocity: {x: 4, y: 5}
+  - initialSize: 2
+    initialPosition: {x: 0, y: 4}
+    initialVelocity: {x: 5, y: 3}
   systemsEnabled:
     keys:
     - MovementSystem

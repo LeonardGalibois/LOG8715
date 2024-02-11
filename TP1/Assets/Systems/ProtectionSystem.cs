@@ -11,6 +11,12 @@ namespace Assets.Systems
     {
         public string Name { get { return "ProtectionSystem"; } }
 
+        private bool IsRepeatedSystem { get; set; }
+        public ProtectionSystem(bool isRepeatedSystem = false)
+        {
+            IsRepeatedSystem = isRepeatedSystem;
+        }
+
         public void UpdateSystem()
         {
             CheckProtectableEntities();
@@ -19,7 +25,11 @@ namespace Assets.Systems
         void CheckProtectableEntities()
         {
             foreach(uint entity in World.currentWorld.entities)
-            {   
+            {
+                // if we are repeating the simulation and the circle is on the left side, we want to continue the iteration
+                // otherwise we skip to the next one
+                if (IsRepeatedSystem && World.currentWorld.GetComponent<PositionComponent>(entity).position.x > 0) continue;
+
                 CollisionComponent collision = World.currentWorld.GetComponent<CollisionComponent>(entity);
                 SizeComponent size = World.currentWorld.GetComponent<SizeComponent>(entity);
                 ProtectedComponent protect = World.currentWorld.GetComponent<ProtectedComponent>(entity);
