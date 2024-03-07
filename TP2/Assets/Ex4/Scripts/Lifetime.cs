@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class Lifetime : MonoBehaviour
 {
-    private const float StartingLifetimeLowerBound = 5;
-    private const float StartingLifetimeUpperBound = 15;
+    public const float StartingLifetimeLowerBound = 5;
+    public const float StartingLifetimeUpperBound = 15;
     
     public float decreasingFactor = 1;
     public bool alwaysReproduce;

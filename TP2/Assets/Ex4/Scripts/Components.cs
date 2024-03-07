@@ -18,5 +18,5 @@ public struct PlantComp : IComponentData { }
 public struct PreyComp : IComponentData { }
 public struct PredatorComp : IComponentData 
 {
-    bool reproduce;
+    public bool reproduce;
 }

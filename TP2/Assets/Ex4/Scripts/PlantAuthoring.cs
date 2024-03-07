@@ -1,18 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Unity.Entities;
+using Unity.Mathematics;
 
 public class PlantAuthoring : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    class Baker : Baker<PlantAuthoring>
     {
-        
-    }
+        public override void Bake(PlantAuthoring authoring)
+        {
+            var entity = GetEntity(TransformUsageFlags.Dynamic | TransformUsageFlags.NonUniformScale);
+            float startingLife = UnityEngine.Random.Range(Lifetime.StartingLifetimeLowerBound, Lifetime.StartingLifetimeUpperBound);
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+            AddComponent(entity, new PlantComp { });
+            AddComponent(entity, new LifeTimeComp
+            {
+                lifetime = startingLife,
+                startingLifetime = startingLife,
+                decreasingFactor = 1
+            });
+        }
     }
 }
