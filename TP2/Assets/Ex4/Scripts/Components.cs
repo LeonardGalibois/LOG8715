@@ -20,3 +20,18 @@ public struct PredatorComp : IComponentData
 {
     public bool reproduce;
 }
+
+public struct SpawnerComp : IComponentData
+{
+    public Entity plantPrefab;
+    public Entity preyPrefab;
+    public Entity predatorPrefab;
+
+    public int plantCount;
+    public int preyCount;
+    public int predatorCount;
+    public int gridSize;
+
+    public int halfWidth;
+    public int halfHeight;
+}
