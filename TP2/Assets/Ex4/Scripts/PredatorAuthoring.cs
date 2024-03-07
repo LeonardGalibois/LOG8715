@@ -8,7 +8,7 @@ public class PredatorAuthoring : MonoBehaviour
     {
         public override void Bake(PredatorAuthoring authoring)
         {
-            var entity = GetEntity(TransformUsageFlags.Dynamic | TransformUsageFlags.NonUniformScale);
+            var entity = GetEntity(TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable);
             float startingLife = UnityEngine.Random.Range(Lifetime.StartingLifetimeLowerBound, Lifetime.StartingLifetimeUpperBound);
 
             AddComponent(entity, new PredatorComp

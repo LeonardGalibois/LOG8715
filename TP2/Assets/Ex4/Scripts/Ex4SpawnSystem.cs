@@ -41,7 +41,7 @@ public partial struct Ex4SpawnSystem : Unity.Entities.ISystem
         }
 
         // Spawn the predator
-        if (SystemAPI.QueryBuilder().WithAll<PredatorAuthoring>().Build().IsEmpty)
+        if (SystemAPI.QueryBuilder().WithAll<PredatorComp>().Build().IsEmpty)
         {
             var plantInstances = state.EntityManager.Instantiate(spawner.predatorPrefab, spawner.predatorCount, Allocator.Temp);
 
@@ -56,6 +56,6 @@ public partial struct Ex4SpawnSystem : Unity.Entities.ISystem
     public void Respawn(ref SystemState state, Entity entity, SpawnerComp spawner)
     {
         var localTransform = SystemAPI.GetComponentRW<LocalTransform>(entity);
-        localTransform.ValueRW.Position = new float3(UnityEngine.Random.Range(-spawner.halfWidth, spawner.halfWidth), UnityEngine.Random.Range(-spawner.halfHeight, spawner.halfHeight), 0);
+        localTransform.ValueRW.Position = new int3(UnityEngine.Random.Range(-spawner.halfWidth, spawner.halfWidth), UnityEngine.Random.Range(-spawner.halfHeight, spawner.halfHeight), 0);
     }
 }
