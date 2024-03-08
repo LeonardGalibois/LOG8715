@@ -9,7 +9,7 @@ public class PreyAuthoring : MonoBehaviour
         public override void Bake(PreyAuthoring authoring)
         {
             var entity = GetEntity(TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable);
-            float startingLife = UnityEngine.Random.Range(Lifetime.StartingLifetimeLowerBound, Lifetime.StartingLifetimeUpperBound);
+            float startingLife = UnityEngine.Random.Range(LifetimeSystem.StartingLifetimeLowerBound, LifetimeSystem.StartingLifetimeUpperBound);
 
             AddComponent(entity, new PreyComp
             {

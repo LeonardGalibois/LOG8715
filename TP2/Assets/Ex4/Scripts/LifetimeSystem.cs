@@ -7,6 +7,9 @@ using Unity.Jobs;
 [BurstCompile]
 public partial struct LifetimeSystem : Unity.Entities.ISystem
 {
+    public const float StartingLifetimeLowerBound = 5;
+    public const float StartingLifetimeUpperBound = 15;
+
     uint updateCounter;
 
     [BurstCompile]
@@ -40,9 +43,9 @@ public partial struct LifetimeSystem : Unity.Entities.ISystem
             random = randomGenerator,
         };
         
-        plantJob.Schedule();
-        preyJob.Schedule();
-        predatorJob.Schedule();
+        plantJob.ScheduleParallel();
+        preyJob.ScheduleParallel();
+        predatorJob.ScheduleParallel();
     }
 }
 [BurstCompile]
