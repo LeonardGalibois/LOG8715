@@ -11,7 +11,10 @@ public class PreyAuthoring : MonoBehaviour
             var entity = GetEntity(TransformUsageFlags.Dynamic | TransformUsageFlags.Renderable);
             float startingLife = UnityEngine.Random.Range(Lifetime.StartingLifetimeLowerBound, Lifetime.StartingLifetimeUpperBound);
 
-            AddComponent(entity, new PreyComp { });
+            AddComponent(entity, new PreyComp
+            {
+                reproduce = false
+            });
             AddComponent(entity, new LifeTimeComp { 
                 lifetime = startingLife,
                 startingLifetime = startingLife,
@@ -21,6 +24,10 @@ public class PreyAuthoring : MonoBehaviour
             {
                 direction = float3.zero,
                 speed = Ex4Config.PreySpeed
+            });
+            AddComponent(entity, new ClosestPlantComp
+            {
+                position = float3.zero
             });
         }
     }

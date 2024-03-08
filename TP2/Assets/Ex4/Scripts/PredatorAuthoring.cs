@@ -26,6 +26,10 @@ public class PredatorAuthoring : MonoBehaviour
                 direction = float3.zero,
                 speed = Ex4Config.PredatorSpeed
             });
+            AddComponent(entity, new ClosestPreyComp
+            {
+                position = float3.zero
+            });
         }
     }
 }

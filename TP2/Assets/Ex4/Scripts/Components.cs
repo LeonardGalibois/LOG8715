@@ -15,10 +15,22 @@ public struct VelocityComp : IComponentData
 }
 
 public struct PlantComp : IComponentData { }
-public struct PreyComp : IComponentData { }
+public struct PreyComp : IComponentData 
+{
+    public bool reproduce;
+}
+public struct ClosestPlantComp : IComponentData
+{
+    public float3 position;
+}
+
 public struct PredatorComp : IComponentData 
 {
     public bool reproduce;
+}
+public struct ClosestPreyComp : IComponentData
+{
+    public float3 position;
 }
 
 public struct SpawnerComp : IComponentData
