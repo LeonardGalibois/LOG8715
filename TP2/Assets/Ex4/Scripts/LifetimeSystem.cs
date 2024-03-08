@@ -7,20 +7,20 @@ using Unity.Jobs;
 [BurstCompile]
 public partial struct LifetimeSystem : Unity.Entities.ISystem
 {
-    public Random randomGenerator;
+    uint updateCounter;
 
     [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<SpawnerComp>();
-        randomGenerator = Random.CreateFromIndex(0);
     }
 
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         SpawnerComp spawnerComp = SystemAPI.GetSingleton<SpawnerComp>();
-        
+        Random randomGenerator = Random.CreateFromIndex(updateCounter++);
+
         var plantJob = new PlantLifetimeJob 
         { 
             deltaTime = SystemAPI.Time.DeltaTime,
