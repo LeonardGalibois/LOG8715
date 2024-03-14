@@ -4,6 +4,8 @@ using Unity.Transforms;
 using Unity.Mathematics;
 using System.Collections;
 using Unity.Collections;
+
+[BurstCompile]
 public partial struct ClosestPreySystem : Unity.Entities.ISystem
 {
     [BurstCompile]
