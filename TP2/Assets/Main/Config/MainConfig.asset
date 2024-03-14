@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MainConfig
   m_EditorClassIdentifier: 
   scenesToLoad:
-  - Ex4
+  - Ex2

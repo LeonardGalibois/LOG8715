@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Serialization;
+using System.Collections.Generic;
 
 public class Circle : MonoBehaviour
 {
@@ -16,10 +17,24 @@ public class Circle : MonoBehaviour
     private const float HealingPerSecond = 1;
     private const float HealingRange = 3;
 
+    private GridShape grid;
+    private SpriteRenderer spriteRenderer;
+    private List<Circle> nearbyCircles;
+
     // Start is called before the first frame update
     private void Start()
     {
         Health = BaseHealth;
+
+        grid = FindObjectOfType<GridShape>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        nearbyCircles = new List<Circle>();
+
+        Collider2D[] nearbyColliders = Physics2D.OverlapCircleAll(transform.position, HealingRange);
+        foreach (var collider in nearbyColliders)
+        {
+            if (collider.TryGetComponent(out Circle circle)) nearbyCircles.Add(circle);
+        }
     }
 
     // Update is called once per frame
@@ -31,21 +46,14 @@ public class Circle : MonoBehaviour
 
     private void UpdateColor()
     {
-        var grid = GameObject.FindObjectOfType<GridShape>();
-        var spriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+        // Here, looking for the GridShape and SpriteRenderer every frame when those two objects can
+        // be known when simulation starts and don't change is way too costly
         spriteRenderer.color = grid.Colors[i, j] * Health / BaseHealth;
     }
 
     private void HealNearbyShapes()
     {
-        var nearbyColliders = Physics2D.OverlapCircleAll(transform.position, HealingRange);
-        foreach (var nearbyCollider in nearbyColliders)
-        {
-            if (nearbyCollider != null && nearbyCollider.TryGetComponent<Circle>(out var circle))
-            {
-                circle.ReceiveHp(HealingPerSecond * Time.deltaTime);
-            }
-        }
+        foreach (var circle in nearbyCircles) circle.ReceiveHp(HealingPerSecond * Time.deltaTime);
     }
 
     public void ReceiveHp(float hpReceived)
