@@ -1,20 +1,20 @@
 using UnityEngine;
 public struct UnoptimisedStruct1
 {
+    public UnoptimizedStruct2[] otherFriends;
+    public UnoptimizedStruct2 mainFriend;
+    public float[] distancesFromObjectives;
+    public double range;
+    public Vector3 position;
     public float velocity;
-    public bool canJump;
+    public float size;
     public int baseHP;
     public int nbAllies;
-    public Vector3 position;
     public int currentHp;
-    public float[] distancesFromObjectives;
     public byte colorAlpha;
-    public double range;
-    public UnoptimizedStruct2 mainFriend;
     public bool isVisible;
-    public UnoptimizedStruct2[] otherFriends;
     public bool isStanding;
-    public float size;
+    public bool canJump;
     
     public UnoptimisedStruct1(float velocity, bool canJump, int baseHP, int nbAllies, Vector3 position, int currentHp, float[] distancesFromObjectives, byte colorAlpha, double range, UnoptimizedStruct2 mainFriend, bool isVisible, UnoptimizedStruct2[] otherFriends, bool isStanding, float size)
     {
@@ -46,16 +46,17 @@ public enum FriendState
 
 public struct UnoptimizedStruct2 
 {
-    public bool isAlive;
-    public float height;
-    public FriendState currentState;
-    public float velocity;
-    public int currentObjective;
+    
     public double maxSight;
-    public bool canJump;
-    public float acceleration;
     public Vector3 position;
+    public float height;
+    public float velocity;
+    public float acceleration;
     public float maxVelocity;
+    public int currentObjective;
+    public FriendState currentState;
+    public bool canJump;
+    public bool isAlive;
     
     public UnoptimizedStruct2(bool isAlive, float height, FriendState currentState, float velocity, int currentObjective, double maxSight, bool canJump, float acceleration, Vector3 position, float maxVelocity)
     {
