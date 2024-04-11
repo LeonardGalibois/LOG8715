@@ -36,7 +36,10 @@ public class GameState : NetworkBehaviour
     private void Start()
     {
         m_GameArea.transform.localScale = new Vector3(m_GameSize.x * 2, m_GameSize.y * 2, 1);
+        m_IsStunned.OnValueChanged += (bool previous, bool newValue) => m_IsLocalStunned = newValue;
     }
+      
+
 
     private void FixedUpdate()
     {
@@ -84,14 +87,7 @@ public class GameState : NetworkBehaviour
     }
     public void LocalStun()
     {
-        if (m_StunLocalCoroutine != null)
-        {
-            StopCoroutine(m_StunLocalCoroutine);
-        }
-        if (IsClient)
-        {
-            m_StunLocalCoroutine = StartCoroutine(StunLocalCoroutine());
-        }
+        m_IsLocalStunned = true;
     }
 
     private IEnumerator StunCoroutine()
@@ -99,12 +95,5 @@ public class GameState : NetworkBehaviour
         m_IsStunned.Value = true;
         yield return new WaitForSeconds(m_StunDuration);
         m_IsStunned.Value = false;
-    }
-
-    private IEnumerator StunLocalCoroutine()
-    {
-        m_IsLocalStunned = true;
-        yield return new WaitForSeconds(m_StunDuration);
-        m_IsLocalStunned = false;
     }
 }
