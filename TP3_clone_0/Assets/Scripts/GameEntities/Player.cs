@@ -4,6 +4,29 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
+public struct InputData : INetworkSerializable
+{
+    public int tick;
+    public Vector2 direction;
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref tick);
+        serializer.SerializeValue(ref direction);
+    }
+}
+
+public struct PositionData : INetworkSerializable
+{
+    public int tick;
+    public Vector2 position;
+
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+    {
+        serializer.SerializeValue(ref tick);
+        serializer.SerializeValue(ref position);
+    }
+}
 
 public class Player : NetworkBehaviour
 {
@@ -29,49 +52,51 @@ public class Player : NetworkBehaviour
     }
 
 
-    private NetworkVariable<Vector2> m_Position = new NetworkVariable<Vector2>();
-    
-    private Vector2[] m_InputBuffer;
-    private Vector2[] m_LocalPositionBuffer;
+    private NetworkVariable<PositionData> m_Position = new NetworkVariable<PositionData>();
+    private PositionData LastHandledPosition;
+    public Vector2 Position => m_Position.Value.position;
+    public Vector2 LocalPosition => m_LocalPositionBuffer[BufferPosition].position;
 
-    public Vector2 ServerPosition => m_Position.Value;
-    public Vector2 LocalPosition => m_LocalPositionBuffer[BufferPosition];
-    private int BufferPosition => ClientTick % m_InputBuffer.Length;
-    private int LastBufferPosition => BufferPosition == 0 ? m_LocalPositionBuffer.Length - 1: BufferPosition - 1;
+    private InputData[] m_InputBuffer;
+    private PositionData[] m_LocalPositionBuffer;
 
-    private float m_ClientTime;
-    private int ServerTick => (int)(m_GameState.ServerTime.Value * (1.0f / Time.fixedDeltaTime));
-    private int ClientTick => (int)(m_ClientTime * (1.0f / Time.fixedDeltaTime)); 
+    private float m_Timer;
+    private int m_CurrentTick;
+    private float m_TimeBetweenTicks;
+    private int m_TickOffset;
 
-    private Queue<Vector2> m_InputQueue = new Queue<Vector2>();
+    private int BufferPosition => m_CurrentTick % m_InputBuffer.Length;
+
+    private Queue<InputData> m_InputQueue = new Queue<InputData>();
 
     private void Awake()
     {
         m_GameState = FindObjectOfType<GameState>();
-        m_ClientTime = m_GameState.ServerTime.Value;
-
-        int bufferLength = 1000;//(int)Math.Ceiling( (1.0 / Time.fixedDeltaTime));
-        m_InputBuffer = new Vector2[bufferLength];
-        m_LocalPositionBuffer = new Vector2[bufferLength];
-
-        Debug.Log($"CurrentRTT: {m_GameState.CurrentRTT}");
-        Debug.Log($"fixedDeltaTime: {Time.fixedDeltaTime}");
-        Debug.Log($"BufferLength: {bufferLength}");
     }
 
-    private void FixedUpdate()
+    private void Start()
     {
-        m_ClientTime += Time.deltaTime;
-        Reconciliate();
+        m_TimeBetweenTicks = 1.0f / NetworkUtility.GetLocalTickRate();
 
-        // Si le stun est active, rien n'est mis a jour.
-        if (GameState == null || GameState.IsStunned)
+        int bufferLength = 1024;
+        m_InputBuffer = new InputData[bufferLength];
+        m_LocalPositionBuffer = new PositionData[bufferLength];
+    }
+
+    private void Update()
+    {
+        m_Timer += Time.deltaTime;
+        
+        while(m_Timer > m_TimeBetweenTicks)
         {
-            m_LocalPositionBuffer[BufferPosition] = m_LocalPositionBuffer[LastBufferPosition];
-            m_InputBuffer[BufferPosition] = Vector2.zero;
-            return;
+            m_Timer -= m_TimeBetweenTicks;
+            m_CurrentTick++;
+            HandleTick();
         }
+    }
 
+    private void HandleTick()
+    {
         // Seul le serveur met à jour la position de l'entite.
         if (IsServer)
         {
@@ -81,10 +106,18 @@ public class Player : NetworkBehaviour
         // Seul le client qui possede cette entite peut envoyer ses inputs. 
         if (IsClient && IsOwner)
         {
-            Debug.Log($"Server Tick: {ServerTick}  Client Tick: {ClientTick}");
+            Reconciliate();
 
             UpdateInputClient();
-            m_LocalPositionBuffer[BufferPosition] = UpdatePosition(m_InputBuffer[BufferPosition], m_LocalPositionBuffer[LastBufferPosition]);
+
+            Vector2 direction = m_InputBuffer[BufferPosition].direction;
+            Vector2 lastPosition = m_LocalPositionBuffer[(m_CurrentTick - 1) % m_InputBuffer.Length].position;
+            PositionData data = new PositionData
+            {
+                tick = m_CurrentTick,
+                position = UpdatePosition(direction, lastPosition)
+            };
+            m_LocalPositionBuffer[BufferPosition] = data;
         }
     }
 
@@ -94,36 +127,48 @@ public class Player : NetworkBehaviour
         if (m_InputQueue.Count > 0)
         {
             var input = m_InputQueue.Dequeue();
-            m_Position.Value = UpdatePosition(input, m_Position.Value); ;
+            PositionData data = new PositionData
+            {
+                tick = input.tick,
+                position = UpdatePosition(input.direction, m_Position.Value.position)
+            };
+            m_Position.Value = data;
         }
     }
 
     private void UpdateInputClient()
     {
         Vector2 inputDirection = new Vector2(0, 0);
-        if (Input.GetKey(KeyCode.W))
+        if (!GameState.IsStunned && !GameState.IsLocalStunned)
         {
-            inputDirection += Vector2.up;
+            if (Input.GetKey(KeyCode.W))
+            {
+                inputDirection += Vector2.up;
+            }
+            if (Input.GetKey(KeyCode.A))
+            {
+                inputDirection += Vector2.left;
+            }
+            if (Input.GetKey(KeyCode.S))
+            {
+                inputDirection += Vector2.down;
+            }
+            if (Input.GetKey(KeyCode.D))
+            {
+                inputDirection += Vector2.right;
+            }
         }
-        if (Input.GetKey(KeyCode.A))
-        {
-            inputDirection += Vector2.left;
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            inputDirection += Vector2.down;
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            inputDirection += Vector2.right;
-        }
-        SendInputServerRpc(inputDirection.normalized);
-        m_InputBuffer[BufferPosition] = inputDirection.normalized;
+
+        InputData data = new InputData { direction = inputDirection.normalized, tick = m_CurrentTick };
+        if(data.direction != Vector2.zero) SendInputServerRpc(data);
+        
+        m_InputBuffer[BufferPosition] = data;
     }
 
     private Vector2 UpdatePosition(Vector2 input, Vector2 previousPosition)
     {
-        Vector2 newPosition = previousPosition + input * m_Velocity * Time.deltaTime;
+        if (GameState.IsStunned || GameState.IsLocalStunned) return previousPosition;
+        Vector2 newPosition = previousPosition + input * m_Velocity * m_TimeBetweenTicks;
 
         var size = GameState.GameSize;
         if (newPosition.x - m_Size < -size.x)
@@ -148,7 +193,7 @@ public class Player : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void SendInputServerRpc(Vector2 input)
+    private void SendInputServerRpc(InputData input)
     {
         // On utilise une file pour les inputs pour les cas ou on en recoit plusieurs en meme temps.
         m_InputQueue.Enqueue(input);
@@ -156,18 +201,26 @@ public class Player : NetworkBehaviour
 
     void Reconciliate()
     {
-        int bufferPosition = ServerTick % m_LocalPositionBuffer.Length;
-        double distanceError = Vector2.Distance(m_Position.Value, m_LocalPositionBuffer[bufferPosition]);
-        
-        Debug.Log($"Error: {distanceError}");
+        if (m_Position.Value.tick == LastHandledPosition.tick) return;
+
+
+        PositionData data = m_Position.Value;
+        LastHandledPosition = data;
+
+        double distanceError = Vector2.Distance(data.position, m_LocalPositionBuffer[data.tick % m_LocalPositionBuffer.Length].position);
 
         if (distanceError > 0.1)
-        {  
-            m_LocalPositionBuffer[bufferPosition] = m_Position.Value;
-            for(int tick = ServerTick + 1; tick < ClientTick; tick++)
+        {
+            Debug.Log($"Server: {data.tick}, Client: {m_CurrentTick}");
+            Debug.Log($"Error: {distanceError}");
+
+            m_LocalPositionBuffer[data.tick % m_LocalPositionBuffer.Length] = data;
+            for(int tick = data.tick + 1; tick < m_CurrentTick; tick++)
             {
-                bufferPosition = tick % m_LocalPositionBuffer.Length;
-                m_LocalPositionBuffer[bufferPosition] = UpdatePosition(m_InputBuffer[bufferPosition], m_LocalPositionBuffer[bufferPosition == 0 ? m_LocalPositionBuffer.Length - 1 : bufferPosition - 1]);
+                int currentBufferPosition = tick % m_LocalPositionBuffer.Length;
+                int lastBufferPosition = (tick - 1) % m_InputBuffer.Length;
+
+                m_LocalPositionBuffer[currentBufferPosition].position = UpdatePosition(m_InputBuffer[currentBufferPosition].direction, m_LocalPositionBuffer[lastBufferPosition].position);
             }
         }
     }

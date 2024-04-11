@@ -16,6 +16,9 @@ public class StunInputManager : NetworkBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 ActivateStunServerRpc();
+                m_GameState.LocalStun();
+                Debug.Log($"Stun: {m_GameState.IsLocalStunned}");
+
             }
         }
     }

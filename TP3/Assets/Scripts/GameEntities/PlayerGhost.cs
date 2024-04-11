@@ -21,6 +21,6 @@ public class PlayerGhost : NetworkBehaviour
 
     private void Update()
     {
-        transform.position = IsClient && IsOwner ? m_Player.LocalPosition : m_Player.ServerPosition;
+        transform.position = IsClient && IsOwner ? m_Player.LocalPosition : m_Player.Position;
     }
 }
